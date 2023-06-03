@@ -1,16 +1,21 @@
+import os
+os.environ['DISPLAY'] = ':0'
+os.environ['XAUTHORITY']='/run/user/1000/gdm/Xauthority'
+
 import pyautogui
 import websockets
 import asyncio
 import time
 
-# create handler for each connection
-clients = 0
-last_movement_millis = 0
-
-
 async def handler(websocket, path):
+    fullscreen_toggle = False
     while True:
-        data = await websocket.recv()
+        try:
+            data = await websocket.recv()
+        except websockets.exceptions.ConnectionClosedOK as e:
+            print("disconnected from keyboard ws")
+            return
+
         if len(data) == 1:
             pyautogui.write(data)
         elif data == "Backspace":
@@ -19,19 +24,57 @@ async def handler(websocket, path):
             pyautogui.write("\n")
         elif data.startswith("*paste*"):
             pyautogui.write(data.lstrip("*paste*"))
+        elif data.startswith("*raw-command*"):
+            command = data.lstrip("*raw-command*")
+            if "fullscreen" in command:
+                if fullscreen_toggle:
+                    pyautogui.press("esc", _pause=False)
+                else:
+                    pyautogui.press("f", _pause=False)
+                # time.sleep(0.1)
+                # pyautogui.press("f11", _pause=False)
+                fullscreen_toggle = not fullscreen_toggle
+                continue
+
+            keys = command.split("+")
+            print("processing command:", keys)
+            
+            if len(keys) == 1 or (len(keys)==2 and keys[0]==""):
+                key = keys[0]
+                if len(keys) == 2:
+                    key = keys[1]
+                pyautogui.press(key, _pause=False)
+                continue
+            for key in keys:
+                if key == "":
+                    continue
+                pyautogui.keyDown(key, _pause=False)
+            for key in keys[::-1]:
+                if key == "":
+                    continue
+                pyautogui.keyUp(key, _pause=False)
+
+        elif data.startswith("*raw_press*"):
+            pyautogui.press(data.lstrip("*raw_press*"))
         else:
             print("\nUNRECOGNISED COMMAND:", data)
+    
+
 
 
 async def handlerMouse(websocket, path):
-    global clients, last_movement_millis
+    last_movement_millis = 0
     speed_magnitude = 0.1
-    scroll_magnitude = 0.5
-    clients += 1
+    scroll_magnitude = 1
     max_x, max_y = pyautogui.size()
-    print(f"connected to {clients} client(s)!")
+    print(f"connected to client!")
     while True:
-        data = await websocket.recv()
+        try:
+            data = await websocket.recv()
+        except websockets.exceptions.ConnectionClosedOK as e:
+            print("disconnected from keyboard ws")
+            return
+
         coord = data.split(",")
         x, y, gtype = 0.1, 0.1, 0
         if len(coord) == 3:
@@ -44,7 +87,7 @@ async def handlerMouse(websocket, path):
             if abs(y) >= abs(x):
                 pyautogui.scroll(y*scroll_magnitude, _pause=False)
             else:
-                pyautogui.hscroll(scroll_magnitude, _pause=False)
+                pyautogui.hscroll(x*scroll_magnitude, _pause=False)
         elif len(coord) == 3 and gtype == 1:
             start_x, start_y = pyautogui.position()
             end_x, end_y = start_x+x, start_y+y

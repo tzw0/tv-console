@@ -23,14 +23,41 @@
         }
     }
 
-    .scroll-controller {
-        border-radius: 20px;
+    .scroll-controller-up {
+        color: $content-colour;
+        text-decoration: none;
+        border: solid $primary-colour 1px;
+        border-radius: 30px 30px 0 0;
         background-color: rgba(79, 1, 128, 0.459);
         width: 30px;
-        height: 100%;
+        height: 20%;
         position: absolute;
         right: 0;
-        top: 0;
+        top: 24%;
+        z-index: 100;
+        text-align: right;
+    
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .scroll-controller-down {
+        text-align: right;
+        color: $content-colour;
+        text-decoration: none;
+        
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        border: solid $primary-colour 1px;
+        border-radius: 0 0 30px 30px;
+        background-color: rgba(79, 1, 128, 0.459);
+        width: 30px;
+        height: 20%;
+        position: absolute;
+        right: 0;
+        top: 46%;
         z-index: 100;
     }
 
@@ -43,61 +70,92 @@
         flex-direction: column;
         user-select: none;
         overflow: hidden;
+    }
 
-        input {
-            padding: 20px;
-            width: calc(100% - 40px);
-            height: 50px;
-            font-size: 20px;
-            text-align: right;
-            opacity: 0;
+    .key-inputs{
+        height: 20%;
+        width: 100%;
+        border-bottom: grey;
+        background-color: $dark;
+
+        .keyboard {
+            display: flex;
+            position: relative;
+            flex-direction: column;
             user-select: none;
-            z-index: 100;
-        }
-
-        .text {
-            z-index: 0;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 80%;
-            padding: 10%;
+            overflow: hidden;
+            width: 100%;
             height: 100%;
-            display: block;
-            line-height: 10px;
 
-            .sep {
-                width: 100%;
-                height: 2px;
-                color: white;
-                background-color: rgb(62, 27, 189);
+            &.close{
+                display: none;
             }
 
-            h3 {
-                width: 100%;
-                color: rgba(255, 255, 255, 0.674);
-                overflow-wrap: break-word;
-                font-size: 30px;
-                line-height: 30px;
+            .media-controller{
+                background: $darker;
+                position: absolute;
+                right: 0;
+                bottom: 0;
+                font-size: 2em;
+                padding: 1.3% 5%;
+                border: solid $primary-colour 1px;
             }
-
-            code {
-                color: bisque;
-                font-size: small;
-                text-align: center;
-                width: 100%;
+                
+            input {
+                padding: 20px;
+                width: calc(100% - 40px);
+                height: 50px;
+                font-size: 20px;
+                text-align: right;
+                opacity: 0;
+                user-select: none;
+                z-index: 100;
+            }
+    
+            .text {
+                z-index: 0;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 80%;
+                padding: 10%;
+                // height: 100%;BBnmmnnnbvhhnmmmmnnnnnnnnnnnnnnnn
                 display: block;
-                font-style: italic;
-                margin-bottom: 15px;
-            }
-
-            text {
-                width: 100%;
-                color: rgba(22, 146, 146, 0.863);
-                font-size: small;
-                font-weight: 200;
-                overflow-wrap: break-word;
                 line-height: 10px;
+    
+                .sep {
+                    width: 100%;
+                    height: 2px;
+                    color: white;
+                    background-color: rgb(62, 27, 189);
+                }
+    
+                h3 {
+                    width: calc(100% - 20px);
+                    color: rgba(255, 255, 255, 0.674);
+                    font-size: 5vw;
+                    line-height: 30px;
+                    overflow: hidden;
+                }
+    
+                code {
+                    color: bisque;
+                    font-size: small;
+                    text-align: center;
+                    width: 100%;
+                    display: block;
+                    font-style: italic;
+                    margin-bottom: 15px;
+                }
+    
+                text {
+                    width: 100%;
+                    color: rgba(22, 146, 146, 0.863);
+                    font-size: small;
+                    font-weight: 200;
+                    overflow-wrap: break-word;
+                    line-height: 10px;
+                }
             }
         }
     }

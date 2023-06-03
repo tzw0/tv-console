@@ -1,12 +1,20 @@
 import "./touchpad.scss"
 import { useRef, useEffect, useState, useMemo } from "react";
 import Controller from "./parser";
+// import PanelManager from "../panel/Panel";
+import MediaController from "../media/Media";
+import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
+import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
+import VideogameAssetIcon from '@mui/icons-material/VideogameAsset';
+
 export default function TouchPad() {
     const [display, setDisplay] = useState("");
-    const [inputText, setInputText] = useState("");
+    const [keyControler, setKeyController] = useState(0);
     const [log, setLog] = useState("");
     const divRef = useRef();
-    const scrollRef = useRef();
+    const scrollupRef = useRef();
+    const scrolldownRef = useRef();
+    const inputRef = useRef();
     const keyboardEventWS = useMemo(() => new WebSocket('ws://192.168.18.2:8000'), []);
     const mouseEventWS = useMemo(() => new WebSocket('ws://192.168.18.2:8001'), []);
     const controller = useMemo(() => new Controller(), []);
@@ -14,8 +22,10 @@ export default function TouchPad() {
     useEffect(() => {
         // 👇 Get the DOM element from the React element
         const element = divRef.current;
-        const scroller = scrollRef.current;
-        if (!element || !scroller) return;
+        const scrollup = scrollupRef.current;
+        const scrolldown = scrolldownRef.current;
+        const inputElement = inputRef.current;
+        if (!element || !scrollup || !scrolldown || !inputElement) return;
 
         keyboardEventWS.addEventListener('open', function (e) {
             console.log("keyboard event ws connection established")
@@ -28,42 +38,46 @@ export default function TouchPad() {
             controller.SendGesture(e, mouseEventWS, false)
         };
 
-        const handleScroll = (e) => {
-            controller.SendGesture(e, mouseEventWS, true)
-        }
+        // const handleScroll = (e) => {
+        //     controller.SendGesture(e, mouseEventWS, true)
+        // }
 
         const handleClick = (e) => {
             controller.GetClickType(e, mouseEventWS)
         }
 
         const setPosition = (e) => {
+            inputElement.blur()
+            controller.ClearInput()
+            setDisplay(controller.GetDisplayText())
+
             controller.SetPosition(e, mouseEventWS)
         }
 
-        scroller.addEventListener("touchstart", setPosition);
+        const scrollupAction = (e) => {
+            controller.scrollUp(mouseEventWS)
+        }
+
+        const scrolldownAction = (e) => {
+            controller.scrolldown(mouseEventWS)
+        }
+
+        scrolldown.addEventListener("touchstart", scrolldownAction);
+        scrollup.addEventListener("touchstart", scrollupAction);
+
         element.addEventListener("touchstart", setPosition);
-        scroller.addEventListener("touchmove", handleScroll)
         element.addEventListener("touchmove", handleGesture);
-        scroller.addEventListener("touchend", handleClick);
         element.addEventListener("touchend", handleClick);
         return () => {
-            scroller.removeEventListener("touchstart", setPosition);
+            scrollup.removeEventListener("touchstart", scrollupAction);
+            scrolldown.removeEventListener("touchstart", scrolldownAction);
+
             element.removeEventListener("touchstart", setPosition);
-            scroller.removeEventListener("touchmove", handleScroll)
             element.removeEventListener("touchmove", handleGesture);
-            scroller.removeEventListener("touchend", handleClick);
             element.removeEventListener("touchend", handleClick);
         };
 
     }, [keyboardEventWS, controller, mouseEventWS]);
-
-    const handleSubmit = (e) => {
-        console.log(inputText)
-        controller.InputText(inputText, keyboardEventWS)
-        e.preventDefault()
-        setInputText("")
-        setDisplay(controller.GetDisplayText())
-    }
 
     const handleCharInput = (e) => {
         const logInfo = controller.SendChar(e.key, false, keyboardEventWS)
@@ -81,26 +95,34 @@ export default function TouchPad() {
 
     return (
         <div className="touchpad" >
-            <div className="paste">
-                <form onSubmit={handleSubmit}>
-                    <input type="text" placeholder="<paste here>"
-                        onChange={(e) => setInputText(e.target.value)}
-                        value={inputText} />
-                </form>
-            </div>
-            <div className="event-pickup" ref={divRef} tabIndex="0">
-                <input type="text" onKeyDown={handleCharInput} onInput={handleMobileInput} value={"_"}></input>
-                <div className="text">
-                    <code>*Tap here to open Keyboard*</code>
-                    <h3>{display}</h3>
-                    <div className="sep"></div>
-                    <text><br /><br /> {log}</text>
+            <div className="key-inputs">
+            {(keyControler)?
+                <MediaController enableKeyboard={()=>setKeyController(0)}
+                sendChar={(char)=>{
+                    controller.SendChar("*raw-command*"+char, false, keyboardEventWS)}}
+                 />:<div></div>}
+                <div className={(keyControler)?"keyboard close":"keyboard"}>
+                    <input type="text" onKeyDown={handleCharInput} onInput={handleMobileInput} value={"_"}
+                    ref={inputRef}></input>
+                    <div className="text">
+                        <code>*Tap here to open Keyboard*</code>
+                        <h3>{display}</h3>
+                        <div className="sep"></div>
+                        <text><br /><br /> {log}</text>
+                    </div>
+                    <div className="media-controller" onClick={() => setKeyController(1)}><VideogameAssetIcon fontSize="inherit"/></div>
                 </div>
             </div>
-            <div className="control-panel">
-                <div className="scroll-controller" ref={scrollRef}>
-                </div>
+            <div className="event-pickup" ref={divRef} >
+                
             </div>
+
+            {/* <PanelManager SendChar={(char)=>{
+                controller.SendChar(char, false, keyboardEventWS)
+            }}/> */}
+
+            <div className="scroll-controller-up" ref={scrollupRef}><KeyboardDoubleArrowUpIcon/></div>
+            <div className="scroll-controller-down" ref={scrolldownRef}><KeyboardDoubleArrowDownIcon/></div>
         </div>
     )
 }

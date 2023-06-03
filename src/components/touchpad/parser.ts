@@ -176,10 +176,20 @@ export default class Controller {
         }
     }
 
+    ClearInput() {
+        this.displayText = ""
+    }
+
     SendChar(str: string, isPasted: boolean, ws: WebSocket): string {
         if (str === null || this.displayText === null) {
             return ""
         }
+
+        if (str.startsWith("*raw-command*")) {
+            ws.send(str)
+            return ""
+        }
+
         var ogStr = str
         if (isPasted) {
             str = "*paste*" + str
@@ -194,7 +204,7 @@ export default class Controller {
             }
         }
         else if (str === "Enter") {
-            this.displayText = ""
+            this.ClearInput()
         }
         else if (str.length === 1) {
             this.displayText += str
@@ -234,7 +244,13 @@ export default class Controller {
     }
 
     GetDisplayText(): string {
-        return this.displayText
+        const char_max = 22
+        var start_index = 0
+        if (this.displayText.length > char_max) {
+            start_index = this.displayText.length - char_max
+        }
+
+        return this.displayText.slice(start_index, this.displayText.length)
     }
 
     InputText(str: string, ws: WebSocket) {
@@ -247,5 +263,17 @@ export default class Controller {
         this.touchStart = nextPos
         this.touchStartTime = e.timeStamp
         this.currentPosition = nextPos
+    }
+
+    scrollUp(ws: WebSocket) {
+        const gesture = new Gesture([new vector(0, 10)])
+        gesture.SetScroll()
+        ws.send(gesture.ToString())
+    }
+
+    scrolldown(ws: WebSocket) {
+        const gesture = new Gesture([new vector(0, -10)])
+        gesture.SetScroll()
+        ws.send(gesture.ToString())
     }
 }
