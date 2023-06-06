@@ -12,10 +12,10 @@ $darker: rgb(8, 0, 17);
 
 h1 {
     font-family: 'Kaushan Script', cursive;
-    font-size: 70px;
+    font-size: 4em;
     color: $primary-colour;
     font-weight: 400;
-    margin: 0;
+    margin: 20px;
 }
 
 h2 {
@@ -65,10 +65,6 @@ div {
     display: flex;
     align-items: center;
     color: $primary-colour;
-}
-
-p {
-    margin-bottom: -7px;
 }
 
 button {

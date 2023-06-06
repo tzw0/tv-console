@@ -1,25 +1,24 @@
 import "./home.scss"
 // import QRCode from 'react-qr-code';
 import qrCode from "./qr-code.png"
+import Bookmarks from "./Bookmarks"
 
 export default function Home() {
     const pasteURL = window.location.href.replaceAll("/rat-tv","")
 
     return (
         <div className="home">
-            <h2>
+            <p>
                 Welcome to
-            </h2>
+            </p>
             <h1>
                 Rat-TV
             </h1>
-
-
             <p>
                 Type in the URL below or goto: <strong>{pasteURL}</strong> from another device.
             </p>
-            <br />
-            <br />
+
+            <Bookmarks/>
 
             {/* <QRCode
                 title="RatTV"
@@ -28,7 +27,8 @@ export default function Home() {
                 fgColor={"white"}
                 size={"40%"}
             /> */}
-            <img src={qrCode} alt="" width={"300px"} />
+            <br />
+            <img src={qrCode} alt="" width={"240px"} />
         </div>
     )
 }

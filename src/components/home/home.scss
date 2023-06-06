@@ -1,5 +1,7 @@
+@import "../../global.scss";
+
 .home {
-    width: 100%;
+    width: calc(100% - 40px);
     padding: 20px;
 
     text-align: center;
@@ -10,4 +12,18 @@
     top: 50%;
     -ms-transform: translateY(-50%);
     transform: translateY(-50%);
+}
+
+p {
+    color: $dark;
+    font-family: 'Comfortaa', cursive;
+    font-size: 1em;
+    margin: 0;
+}
+
+strong{
+    font-size: 1.2em;
+    font-weight: 500;
+    text-decoration: underline;
+    margin: 0 5px;
 }
