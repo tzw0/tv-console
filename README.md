@@ -13,7 +13,7 @@ sudo docker update --restart=no <container_id>
 docker build -t rat-tv-live .
 docker images
 
-docker run --restart=always -d -p 3000:80 rat-tv-live
+docker run --restart=always -d -p  3000:80 -e "REACT_APP_IP=192.168.16.4" rat-tv-live
 ```
 
 ### Start the dev server (with hot reload) `:3001`:

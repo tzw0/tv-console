@@ -15,10 +15,12 @@ export default function TouchPad() {
     const scrollupRef = useRef();
     const scrolldownRef = useRef();
     const inputRef = useRef();
-    const keyboardEventWS = useMemo(() => new WebSocket('ws://192.168.18.2:8000'), []);
-    const mouseEventWS = useMemo(() => new WebSocket('ws://192.168.18.2:8001'), []);
+    const keyboardEventWS = useMemo(() => new WebSocket(`ws://${process.env.REACT_APP_IP}:8000`), []);
+    const mouseEventWS = useMemo(() => new WebSocket(`ws://${process.env.REACT_APP_IP}:8001`), []);
     const controller = useMemo(() => new Controller(), []);
 
+    console.log("server envs:", process.env)
+    console.log("server ip:", process.env.REACT_APP_IP)
     useEffect(() => {
         // 👇 Get the DOM element from the React element
         const element = divRef.current;

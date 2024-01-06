@@ -112,9 +112,19 @@ async def handlerMouse(websocket, path):
             print("right-click")
             pyautogui.click(button="right")
 
+import subprocess
+
+result = subprocess.run(["hostname", "-I"], stdout=subprocess.PIPE)
+local_ip = ""
+
+for ip in result.stdout.split():
+    if "192.168.18" in ip.decode():
+        local_ip = ip.decode()
+
+print("local_ip:", local_ip)
 print("start server on 8000 and 8001")
-start_server = websockets.serve(handler, "192.168.18.2", 8000)
-start_server_mouse = websockets.serve(handlerMouse, "192.168.18.2", 8001)
+start_server = websockets.serve(handler, local_ip, 8000)
+start_server_mouse = websockets.serve(handlerMouse, local_ip, 8001)
 
 
 asyncio.get_event_loop().run_until_complete(start_server)

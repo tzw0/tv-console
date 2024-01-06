@@ -3,7 +3,7 @@ import "./bookmarks.scss"
 const bookmarks = [
     {
         "name": "FMovies",
-        "url": "https://ww4.fmovies.co/"
+        "url": "https://www.fmoviesto.cc/"
     },
     {
         "name": "YouTube",

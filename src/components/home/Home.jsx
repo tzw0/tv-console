@@ -1,6 +1,6 @@
 import "./home.scss"
 // import QRCode from 'react-qr-code';
-import qrCode from "./qr-code.png"
+// import qrCode from "./qr-code.png"
 import Bookmarks from "./Bookmarks"
 
 export default function Home() {
@@ -27,8 +27,8 @@ export default function Home() {
                 fgColor={"white"}
                 size={"40%"}
             /> */}
-            <br />
-            <img src={qrCode} alt="" width={"240px"} />
+            {/* <br /> */}
+            {/* <img src={qrCode} alt="" width={"240px"} /> */}
         </div>
     )
 }

@@ -4,8 +4,9 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile.dev
+      args: [ "ip=10.192xxx" ]
+      dockerfile: Dockerfile
     volumes:
       - ./src:/app/src
     ports:
-      - "3001:3000"
+      - "3000:3000"
