@@ -1,3 +1,6 @@
+// systemctl status rat-tv
+// Can read https://www.freedesktop.org/software/systemd/man/latest/systemd.service.html for more.
+
 [Unit]
 Description=Rat TV web server
 After=multi-user.target
@@ -5,10 +8,11 @@ After=multi-user.target
 [Service]
 Type=idle
 WorkingDirectory=/home/ratbox/Projects/tv/rat-tv
+ExecStartPre=/usr/local/bin/rat-tv-stop
 ExecStartPre=/home/ratbox/Projects/tv/rat-tv/dockerFile-creator.sh
 ExecStartPre=docker build -t rat-tv-live /home/ratbox/Projects/tv/rat-tv
-ExecStart=docker run -d -p 3000:80 rat-tv-live
+ExecStartPre=docker run -d -p 80:80 rat-tv-live
+ExecStart=/home/ratbox/Projects/tv/rat-tv/controller/py-env/bin/python /home/ratbox/Projects/tv/rat-tv/controller/main.py > /home/ratbox/Projects/tv/rat-tv/controller/controller.log 2>&1
 User=root
-
 [Install]
 WantedBy=multi-user.target

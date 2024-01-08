@@ -3,6 +3,19 @@
 ## Guide used for dockerising react:
 `https://rsbh.dev/blogs/dockerize-react-app`
 
+# Setup
+1. Copy the rat-tv systemd service and related bin files.
+```
+ln -s /home/ratbox/Projects/tv/rat-tv/startup.sh /usr/local/bin/rat-tv-start
+ln -s /home/ratbox/Projects/tv/rat-tv/stop.sh /usr/local/bin/rat-tv-stop
+```
+2. Create a systemd soft link for the rat-tv service
+```
+ln -s /home/ratbox/Projects/tv/rat-tv/service.service  /etc/systemd/system/rat-tv.service
+```
+3. Configure the startup script: Set your system to run the script startup.sh on startup. This will open firefox to your rat-tv home page once the service is ready.
+
+
 ### Starting the production server on `:3000`:
 ```
 # If updating do these 2 steps
@@ -47,13 +60,4 @@ docker-compose up
     source controller/py-env/bin/activate
     xhost +local:root
     python3 controller/main.py
-    ```
-4. To make it a start script
-    ```
-    cd /etc/systemd/system
-    ln -s /home/ratbox/Projects/tv/rat-tv/controller/client.service  desktop-controller-client.service
-    daemon-reload
-    sudo systemctl enable desktop-controller-client.service
-    sudo systemctl start desktop-controller-client.service
-    sudo systemctl status desktop-controller-client.service
     ```
