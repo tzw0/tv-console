@@ -1,5 +1,5 @@
 FROM node:18-alpine AS builder
-ENV REACT_APP_IP 192.168.18.7
+ENV REACT_APP_IP 192.168.18.100
 
 WORKDIR /app
 COPY package.json ./

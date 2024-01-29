@@ -1,11 +1,15 @@
 import os
 os.environ['DISPLAY'] = ':0'
 os.environ['XAUTHORITY']='/run/user/1000/gdm/Xauthority'
-
+import ssl
 import pyautogui
 import websockets
 import asyncio
 import time
+import pathlib
+
+
+# Ref: https://websockets.readthedocs.io/en/stable/howto/quickstart.html
 
 async def handler(websocket, path):
     fullscreen_toggle = False
@@ -123,10 +127,19 @@ for ip in result.stdout.split():
 
 print("local_ip:", local_ip)
 print("start server on 8000 and 8001")
+ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+this_pem = pathlib.Path(__file__).with_name("this.pem")
+
+ssl_context.load_verify_locations(this_pem)
+start_server_secure = websockets.serve(handler, local_ip, 8002, ssl=ssl_context)
 start_server = websockets.serve(handler, local_ip, 8000)
+start_server_mouse_secure = websockets.serve(handlerMouse, local_ip, 8003, ssl=ssl_context)
 start_server_mouse = websockets.serve(handlerMouse, local_ip, 8001)
 
 
 asyncio.get_event_loop().run_until_complete(start_server)
 asyncio.get_event_loop().run_until_complete(start_server_mouse)
+
+# asyncio.get_event_loop().run_until_complete(start_server_secure)
+# asyncio.get_event_loop().run_until_complete(start_server_mouse_secure)
 asyncio.get_event_loop().run_forever()

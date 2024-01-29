@@ -2,8 +2,10 @@
 // Can read https://www.freedesktop.org/software/systemd/man/latest/systemd.service.html for more.
 
 [Unit]
-Description=Rat TV web server
+Description=Rat TV web server + mouse and keyboard translation server
 After=multi-user.target
+StartLimitIntervalSec=3600
+StartLimitBurst=3600
 
 [Service]
 Type=idle
@@ -14,5 +16,6 @@ ExecStartPre=docker build -t rat-tv-live /home/ratbox/Projects/tv/rat-tv
 ExecStartPre=docker run -d -p 80:80 rat-tv-live
 ExecStart=/home/ratbox/Projects/tv/rat-tv/controller/py-env/bin/python /home/ratbox/Projects/tv/rat-tv/controller/main.py > /home/ratbox/Projects/tv/rat-tv/controller/controller.log 2>&1
 User=root
+Restart=on-failure
 [Install]
 WantedBy=multi-user.target
